@@ -6,7 +6,7 @@ uniform float slice_height = 0.15;
 void fragment() {
 	float height = texture(TEXTURE, UV).r;
 	ivec2 size = textureSize(TEXTURE, 0);
-	vec3 color = vec3(step(slice_height, height));
+	vec3 color = height > slice_height ? vec3(0.0, 1.0, 1.0) : vec3(0.0);
 	
 	if (
 		FRAGCOORD.x <= 1.0 || FRAGCOORD.y <= 1.0 ||
