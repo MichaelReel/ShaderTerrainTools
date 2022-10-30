@@ -120,6 +120,7 @@ texture = ExtResource( 1 )
 stretch_mode = 1
 
 [node name="DebugTimer" type="Timer" parent="Debug"]
+wait_time = 0.1
 
 [node name="DisplayDebug" type="TextureRect" parent="Debug"]
 visible = false

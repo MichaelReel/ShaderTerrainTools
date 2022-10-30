@@ -6,7 +6,6 @@ const slice_depth : float = 1.0 / float(layers)
 var terrain_workspace : TextureArray
 var terrain_layer : int = 0
 var flood_repeat_hash : String = ""
-var flood_last_layer : ImageTexture
 
 onready var slice_viewport := $Slice/SliceViewport
 onready var slice_texture := $Slice/SliceViewport/TextureRect
