@@ -1,10 +1,14 @@
 shader_type canvas_item;
 
+
+uniform sampler2D last_layer; 
+
 const float color_diff = 0.00390625;
 const float color_max = 1.0 - color_diff;
 
 const vec2 dirs_1[] = {
 	vec2( 1.0,  0.0),  // E
+	vec2( 1.0,  1.0),  // NE
 	vec2( 1.0,  1.0),  // NE
 	vec2( 0.0,  1.0),  // N
 	vec2(-1.0,  1.0),  // NW
@@ -40,7 +44,8 @@ void fragment() {
 	
 	// If this pixel if black and a red is nearby, set this red
 	if (is_black(color)) {
-		if (red_nearby(uv, sps, TEXTURE)) {
+		float last_red = texture(last_layer, uv).r;
+		if (last_red > color_max || red_nearby(uv, sps, TEXTURE)) {
 			color.r = 1.0;
 		}
 	}

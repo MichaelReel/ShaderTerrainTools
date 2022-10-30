@@ -20,13 +20,13 @@ shader_param/slice_height = 0.15
 viewport_path = NodePath("TerrainInitViewport")
 
 [sub_resource type="ViewportTexture" id=1]
-viewport_path = NodePath("SliceViewport")
+viewport_path = NodePath("Slice/SliceViewport")
 
 [sub_resource type="ShaderMaterial" id=5]
 shader = ExtResource( 5 )
 
 [sub_resource type="ViewportTexture" id=6]
-viewport_path = NodePath("FloodViewport")
+viewport_path = NodePath("Flood/FloodViewport")
 
 [sub_resource type="ViewportTexture" id=7]
 viewport_path = NodePath("Debug/Viewport")
@@ -48,50 +48,58 @@ anchor_bottom = 1.0
 texture = ExtResource( 1 )
 stretch_mode = 1
 
-[node name="SliceViewport" type="Viewport" parent="."]
+[node name="Slice" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="SliceViewport" type="Viewport" parent="Slice"]
 size = Vector2( 1024, 1024 )
 hdr = false
 disable_3d = true
 usage = 0
 render_target_v_flip = true
 
-[node name="TextureRect" type="TextureRect" parent="SliceViewport"]
+[node name="TextureRect" type="TextureRect" parent="Slice/SliceViewport"]
 material = SubResource( 4 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 texture = SubResource( 3 )
 stretch_mode = 1
 
-[node name="SliceTimer" type="Timer" parent="."]
+[node name="SliceTimer" type="Timer" parent="Slice"]
 wait_time = 0.1
 
-[node name="DisplaySlice" type="TextureRect" parent="."]
+[node name="DisplaySlice" type="TextureRect" parent="Slice"]
 margin_right = 1024.0
 margin_bottom = 1024.0
 texture = SubResource( 1 )
 stretch_mode = 1
 
-[node name="FloodViewport" type="Viewport" parent="."]
+[node name="Flood" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="FloodViewport" type="Viewport" parent="Flood"]
 size = Vector2( 1024, 1024 )
 hdr = false
 disable_3d = true
 usage = 0
 render_target_v_flip = true
 
-[node name="TextureRect" type="TextureRect" parent="FloodViewport"]
+[node name="TextureRect" type="TextureRect" parent="Flood/FloodViewport"]
 material = SubResource( 5 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 texture = ExtResource( 1 )
 stretch_mode = 1
 
-[node name="FloodTimer" type="Timer" parent="."]
+[node name="FloodTimer" type="Timer" parent="Flood"]
 wait_time = 0.1
 
-[node name="DisplayFlood" type="TextureRect" parent="."]
+[node name="DisplayFlood" type="TextureRect" parent="Flood"]
 visible = false
-margin_right = 40.0
-margin_bottom = 40.0
+margin_right = 1024.0
+margin_bottom = 1024.0
 texture = SubResource( 6 )
 
 [node name="Debug" type="Control" parent="."]
@@ -119,6 +127,6 @@ margin_right = 40.0
 margin_bottom = 40.0
 texture = SubResource( 7 )
 
-[connection signal="timeout" from="SliceTimer" to="." method="_on_SliceTimer_timeout"]
-[connection signal="timeout" from="FloodTimer" to="." method="_on_FloodTimer_timeout"]
+[connection signal="timeout" from="Slice/SliceTimer" to="." method="_on_SliceTimer_timeout"]
+[connection signal="timeout" from="Flood/FloodTimer" to="." method="_on_FloodTimer_timeout"]
 [connection signal="timeout" from="Debug/DebugTimer" to="." method="_on_DebugTimer_timeout"]
