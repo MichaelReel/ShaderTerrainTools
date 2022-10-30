@@ -1,6 +1,6 @@
 extends Control
 
-const layers : int = 256 # 256
+const layers : int = 256
 const slice_depth : float = 1.0 / float(layers)
 
 var terrain_workspace : TextureArray
@@ -16,6 +16,10 @@ onready var flood_viewport := $Flood/FloodViewport
 onready var flood_texture := $Flood/FloodViewport/TextureRect
 onready var flood_timer := $Flood/FloodTimer
 onready var flood_display := $Flood/DisplayFlood
+
+onready var surface_viewport := $Surfacing/SurfaceViewport
+onready var surface_texture := $Surfacing/SurfaceViewport/TextureRect
+onready var surface_display := $Surfacing/DisplaySurfaces
 
 onready var debug_texture := $Debug/Viewport/TextureRect
 onready var debug_timer := $Debug/DebugTimer
@@ -86,7 +90,8 @@ func _on_FloodTimer_timeout() -> void:
 		terrain_layer += 1
 		if terrain_layer >= layers:
 			flood_timer.stop()
-			_setup_debug()
+#			_setup_debug()
+			_setup_surfacing()
 			return
 		
 		# Setup the next layer by overwriting the img we just saved
@@ -98,6 +103,16 @@ func _on_FloodTimer_timeout() -> void:
 	var texture = ImageTexture.new()
 	texture.create_from_image(img)
 	flood_texture.texture = texture
+	
+### SURFACING ###
+
+func _setup_surfacing() -> void:
+	surface_texture.material.set_shader_param("layers", terrain_workspace)
+	surface_texture.material.set_shader_param("layer_count", layers)
+	
+	slice_display.visible = false
+	flood_display.visible = false
+	surface_display.visible = true
 
 ### DEBUG ###
 
@@ -124,4 +139,3 @@ func _on_DebugTimer_timeout() -> void:
 	var texture := ImageTexture.new()
 	texture.create_from_image(img)
 	debug_texture.texture = texture
-	

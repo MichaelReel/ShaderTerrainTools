@@ -1,10 +1,11 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://icon.png" type="Texture" id=1]
 [ext_resource path="res://terrain2d/init_heightmap.gdshader" type="Shader" id=2]
 [ext_resource path="res://TerrainBuilder.gd" type="Script" id=3]
 [ext_resource path="res://terrain2d/slice.gdshader" type="Shader" id=4]
 [ext_resource path="res://terrain2d/flood.gdshader" type="Shader" id=5]
+[ext_resource path="res://terrain2d/surfacing.gdshader" type="Shader" id=6]
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 2 )
@@ -30,6 +31,16 @@ viewport_path = NodePath("Flood/FloodViewport")
 
 [sub_resource type="ViewportTexture" id=7]
 viewport_path = NodePath("Debug/Viewport")
+
+[sub_resource type="ShaderMaterial" id=8]
+shader = ExtResource( 6 )
+shader_param/layer_count = null
+
+[sub_resource type="ViewportTexture" id=9]
+viewport_path = NodePath("TerrainInitViewport")
+
+[sub_resource type="ViewportTexture" id=10]
+viewport_path = NodePath("Surfacing/SurfaceViewport")
 
 [node name="TerrainBuilder" type="Control"]
 script = ExtResource( 3 )
@@ -127,6 +138,30 @@ visible = false
 margin_right = 40.0
 margin_bottom = 40.0
 texture = SubResource( 7 )
+
+[node name="Surfacing" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="SurfaceViewport" type="Viewport" parent="Surfacing"]
+size = Vector2( 1024, 1024 )
+hdr = false
+disable_3d = true
+usage = 0
+render_target_v_flip = true
+
+[node name="TextureRect" type="TextureRect" parent="Surfacing/SurfaceViewport"]
+material = SubResource( 8 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = SubResource( 9 )
+stretch_mode = 1
+
+[node name="DisplaySurfaces" type="TextureRect" parent="Surfacing"]
+visible = false
+margin_right = 40.0
+margin_bottom = 40.0
+texture = SubResource( 10 )
 
 [connection signal="timeout" from="Slice/SliceTimer" to="." method="_on_SliceTimer_timeout"]
 [connection signal="timeout" from="Flood/FloodTimer" to="." method="_on_FloodTimer_timeout"]
