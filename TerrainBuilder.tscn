@@ -1,0 +1,110 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://icon.png" type="Texture" id=1]
+[ext_resource path="res://terrain2d/init_heightmap.gdshader" type="Shader" id=2]
+[ext_resource path="res://TerrainBuilder.gd" type="Script" id=3]
+[ext_resource path="res://terrain2d/slice.gdshader" type="Shader" id=4]
+[ext_resource path="res://terrain2d/flood.gdshader" type="Shader" id=5]
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = ExtResource( 2 )
+shader_param/warping = 0.2
+shader_param/x_shape = 0.4
+shader_param/depth = 0.5
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = ExtResource( 4 )
+shader_param/slice_height = 0.15
+
+[sub_resource type="ViewportTexture" id=3]
+viewport_path = NodePath("TerrainInitViewport")
+
+[sub_resource type="ViewportTexture" id=1]
+viewport_path = NodePath("SliceViewport")
+
+[sub_resource type="ShaderMaterial" id=5]
+shader = ExtResource( 5 )
+
+[sub_resource type="ViewportTexture" id=6]
+viewport_path = NodePath("FloodViewport")
+
+[node name="TerrainBuilder" type="Control"]
+script = ExtResource( 3 )
+
+[node name="TerrainInitViewport" type="Viewport" parent="."]
+size = Vector2( 1024, 1024 )
+hdr = false
+disable_3d = true
+usage = 0
+render_target_v_flip = true
+
+[node name="TextureRect" type="TextureRect" parent="TerrainInitViewport"]
+material = SubResource( 2 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 1 )
+stretch_mode = 1
+
+[node name="SliceViewport" type="Viewport" parent="."]
+size = Vector2( 1024, 1024 )
+hdr = false
+disable_3d = true
+usage = 0
+render_target_v_flip = true
+
+[node name="TextureRect" type="TextureRect" parent="SliceViewport"]
+material = SubResource( 4 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = SubResource( 3 )
+stretch_mode = 1
+
+[node name="SliceTimer" type="Timer" parent="."]
+wait_time = 0.1
+
+[node name="DisplaySlice" type="TextureRect" parent="."]
+margin_right = 1024.0
+margin_bottom = 1024.0
+texture = SubResource( 1 )
+stretch_mode = 1
+
+[node name="FloodViewport" type="Viewport" parent="."]
+size = Vector2( 1024, 1024 )
+hdr = false
+disable_3d = true
+usage = 0
+render_target_v_flip = true
+
+[node name="TextureRect" type="TextureRect" parent="FloodViewport"]
+material = SubResource( 5 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 1 )
+stretch_mode = 1
+
+[node name="FloodTimer" type="Timer" parent="."]
+wait_time = 0.1
+
+[node name="DisplayFlood" type="TextureRect" parent="."]
+visible = false
+margin_right = 40.0
+margin_bottom = 40.0
+texture = SubResource( 6 )
+
+[node name="Debug" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="TextureRect" type="TextureRect" parent="Debug"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 1 )
+stretch_mode = 1
+
+[node name="DebugTimer" type="Timer" parent="Debug"]
+wait_time = 0.1
+
+[connection signal="timeout" from="SliceTimer" to="." method="_on_SliceTimer_timeout"]
+[connection signal="timeout" from="FloodTimer" to="." method="_on_FloodTimer_timeout"]
+[connection signal="timeout" from="Debug/DebugTimer" to="." method="_on_DebugTimer_timeout"]
