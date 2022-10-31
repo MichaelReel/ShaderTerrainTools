@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://renderer3d/terrain3d.gdshader" type="Shader" id=1]
+[ext_resource path="res://sample.png" type="Texture" id=2]
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = ExtResource( 1 )
+shader_param/height_scale = 0.005
+shader_param/height_map = ExtResource( 2 )
+shader_param/surface_map = ExtResource( 2 )
+
+[sub_resource type="PlaneMesh" id=1]
+material = SubResource( 2 )
+size = Vector2( 1, 1 )
+subdivide_width = 1024
+subdivide_depth = 1024
+center_offset = Vector3( 0.5, 0, 0.5 )
+
+[node name="Spatial" type="Spatial"]
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -1 )
+mesh = SubResource( 1 )
+skeleton = NodePath("../Camera")
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.955149, 0.296125, 0, -0.296125, 0.955149, 0, 0.5, 1.2 )
+current = true
+fov = 10.0

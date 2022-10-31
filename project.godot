@@ -11,11 +11,12 @@ config_version=4
 [application]
 
 config/name="ShaderTerrainTools"
-run/main_scene="res://TerrainBuilder.tscn"
+run/main_scene="res://TerrainTool.tscn"
 config/icon="res://icon.png"
 
 [display]
 
+window/size/width=2048
 window/size/height=1024
 
 [gui]

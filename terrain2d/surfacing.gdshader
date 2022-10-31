@@ -22,9 +22,7 @@ void fragment() {
 
 	float height = texture(TEXTURE, uv).g;
 	float water = max(height, highest_black(uv));
-	if (water > height) {
-		height = 0.0;
-	} else {
+	if (water <= height) {
 		water = 0.0;
 	}
 

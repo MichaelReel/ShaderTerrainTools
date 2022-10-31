@@ -28,15 +28,15 @@ bool red_in_los(vec2 uv, vec2 sps, sampler2D tex) {
 		float red = nc.r;
 		float green = nc.g;
 		float blue = nc.b;
-		int seek = 2;
-		// Scan until we hit something
-		while (red < color_diff && green < color_diff && blue < color_diff) {
-			nc = get_neighbour_color(uv, sps, tex, dirs_1[i] * float(seek));
-			red = nc.r;
-			green = nc.g;
-			blue = nc.b;
-			seek += 1;
-		}
+//		int seek = 2;
+//		// Scan until we hit something
+//		while (red < color_diff && green < color_diff && blue < color_diff) {
+//			nc = get_neighbour_color(uv, sps, tex, dirs_1[i] * float(seek));
+//			red = nc.r;
+//			green = nc.g;
+//			blue = nc.b;
+//			seek += 1;
+//		}
 		
 		if (red > color_max) {
 			return true;
