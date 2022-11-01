@@ -1,10 +1,14 @@
 shader_type canvas_item;
 
-uniform float warping = 0.2;
+uniform float warping_1 = 0.2;
+uniform float warping_2 = 0.2;
 uniform float x_shape = 0.4;
 uniform float depth = 0.5;
 uniform float min_range = 0.2;
 uniform float max_range = 0.7;
+uniform vec2 root_offset = vec2(0.0, 0.0);
+uniform vec2 warp_offset_1 = vec2(0.0, 0.3);
+uniform vec2 warp_offset_2 = vec2(5.2, 1.3);
 
 const float K1 = 0.366025404; // (sqrt(3)-1)/2;
 const float K2 = 0.211324865; // (3-sqrt(3))/6;
@@ -67,13 +71,11 @@ float get_edge_fade(vec2 uv) {
 void fragment() {
 	vec2 uv = UV;
 	
-	vec2 offset_1 = vec2(0.0, 0.3);
-	vec2 offset_2 = vec2(5.2, 1.3);
 	
 	// Adding time to the input of the combining noise causes an inplace \"flow\"
-	float f1 = fbm(uv + offset_1) * warping; 
-	float f2 = fbm(uv + offset_2) * warping;
-	vec2 mod_uv = uv - vec2(f1, f2);
+	float f1 = fbm(uv + warp_offset_1) * warping_1; 
+	float f2 = fbm(uv + warp_offset_2) * warping_2;
+	vec2 mod_uv = uv + root_offset - vec2(f1, f2);
 	float height = fbm(mod_uv);
 	float fade = get_edge_fade(uv);
 	
