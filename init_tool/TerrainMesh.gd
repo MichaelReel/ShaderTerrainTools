@@ -1,5 +1,7 @@
 extends Control
 
+signal heightmap_saved(path)
+
 onready var texture_viewport := $TextureViewportContainer/Viewport
 onready var texture_rect := $TextureViewportContainer/Viewport/TextureRect
 onready var plane_mesh := $TerrainViewportContainer/Viewport/TerrainMesh
@@ -36,8 +38,8 @@ onready var display_terrain_scale := $GridContainer/Label_TerrainScale_Value
 onready var display_sealevel := $GridContainer/Label_Sealevel_Value
 
 onready var debounce_timer := $GridContainer/DebounceTimer
-
 onready var rotation_player := $TerrainViewportContainer/Viewport/AnimationPlayer
+onready var file_dialog := $FileDialog
 
 var rotation_speed = -0.1;
 
@@ -95,6 +97,12 @@ func _update_value_displays() -> void:
 	display_terrain_scale.text   = "%5.2f" % slider_terrain_scale.value
 	display_sealevel.text        = "%5.2f" % slider_sealevel.value
 
+func _get_time_based_filename() -> String:
+	var filename = "terrain_"
+	filename += Time.get_date_string_from_system().replace("-", "")
+	filename += Time.get_time_string_from_system().replace(":", "")
+	filename += ".png"
+	return filename
 
 
 func _on_HSlider_value_changed(_value: float) -> void:
@@ -103,14 +111,27 @@ func _on_HSlider_value_changed(_value: float) -> void:
 		_update_texture_shader_uniforms()
 		debounce_timer.start()
 
-
 func _on_HSlider_terrain_value_changed(_value: float) -> void:
 	if debounce_timer.is_stopped():
 		_update_value_displays()
 		_update_terrain_shader_uniforms()
 		debounce_timer.start()
-	
 
 func _on_HSlider_sea_changed(_value: float) -> void:
 	_update_value_displays()
 	_update_sea_height()
+
+func _on_Button_pressed() -> void:
+	file_dialog.current_file = _get_time_based_filename() 
+	file_dialog.show()
+
+func _on_FileDialog_file_selected(path):
+	texture_viewport.set_clear_mode(Viewport.CLEAR_MODE_ONLY_NEXT_FRAME)
+	yield(VisualServer, "frame_post_draw")
+	var img = texture_viewport.get_texture().get_data()
+	img.flip_y()
+	img.save_png(path)
+	emit_signal("heightmap_saved", path)
+	
+	
+	
