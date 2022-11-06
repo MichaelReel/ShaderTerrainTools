@@ -15,3 +15,4 @@ script = ExtResource( 2 )
 visible = false
 
 [connection signal="heightmap_saved" from="TerrainInitTool" to="." method="_on_TerrainInitTool_heightmap_saved"]
+[connection signal="slices_saved" from="TerrainFloodTool" to="." method="_on_TerrainFloodTool_slices_saved"]

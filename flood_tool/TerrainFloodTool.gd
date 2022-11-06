@@ -1,5 +1,7 @@
 extends Control
 
+signal slices_saved(slices_path)
+
 const layers : int = 256
 const slice_depth : float = 1.0 / float(layers)
 
@@ -20,7 +22,8 @@ onready var flood_texture := $FloodingViewportContainer/Viewport/TextureRect
 onready var flood_viewport := $FloodingViewportContainer/Viewport
 onready var flood_timer := $FloodingViewportContainer/FloodTimer
 
-onready var save_timer := $SaveTimer
+onready var save_bar := $SaveProgressBar
+onready var save_timer := $SaveProgressBar/SaveTimer
 
 func _ready() -> void:
 	# If we're not the root scene, let the caller hit begin_flood directly
@@ -135,6 +138,7 @@ func _make_sure_directory_exists(dir_path: String) -> void:
 
 func _setup_saving() -> void:
 	_make_sure_directory_exists(workspace_path)
+	save_bar.max_value = layers
 	save_timer.start()
 
 func _save_step() -> void:
@@ -150,7 +154,9 @@ func _save_step() -> void:
 	save_layer += 1
 	if save_layer >= layers:
 		save_timer.stop()
+		emit_signal("slices_saved", workspace_path)
 		return
+	save_bar.value = save_layer
 	
 	var time_taken_ms = OS.get_ticks_usec() - start_ms
 	print ("Save time take: %dns" % time_taken_ms)
