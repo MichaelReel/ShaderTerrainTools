@@ -2,12 +2,12 @@
 
 [ext_resource path="res://flood_tool/TerrainFloodTool.gd" type="Script" id=1]
 [ext_resource path="res://sample.png" type="Texture" id=2]
-[ext_resource path="res://flood_tool/surfacing_tool.gdshader" type="Shader" id=3]
+[ext_resource path="res://flood_tool/slice_tool.gdshader" type="Shader" id=3]
 [ext_resource path="res://flood_tool/flood_tool.gdshader" type="Shader" id=4]
 
 [sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 3 )
-shader_param/layer_count = null
+shader_param/slice_height = 0.15
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 4 )

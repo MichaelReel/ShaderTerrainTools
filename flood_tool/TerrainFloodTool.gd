@@ -59,8 +59,9 @@ func _slice_step():
 	var img : Image = slice_viewport.get_texture().get_data()
 	terrain_workspace.set_layer_data(img, slice_layer)
 	
-	if slice_layer <= 0:
+	if slice_layer == 0:
 		_setup_flooding()
+		pass
 	
 	slice_layer += 1
 	if slice_layer >= layers:
@@ -77,7 +78,7 @@ func _hash_image(img : Image) -> String:
 	ctx.update(img.get_data())
 	var res = ctx.finish()
 	return res.hex_encode()
-	
+
 func _setup_flooding() -> void:
 	var texture := ImageTexture.new()
 	texture.create_from_image(terrain_workspace.get_layer_data(flood_layer))
@@ -86,6 +87,10 @@ func _setup_flooding() -> void:
 	flood_timer.start()
 
 func _flood_step() -> void:
+	# Skip this if we've caught up to available inputs
+	if flood_layer <= slice_layer + 1:
+		return
+	
 	flood_viewport.set_clear_mode(Viewport.CLEAR_MODE_ONLY_NEXT_FRAME)
 	yield(VisualServer, "frame_post_draw")
 	var img : Image = flood_viewport.get_texture().get_data()
@@ -96,17 +101,17 @@ func _flood_step() -> void:
 		var flood_last_layer := ImageTexture.new()
 		flood_last_layer.create_from_image(img)
 		flood_texture.material.set_shader_param("last_layer", flood_last_layer)
-		
+
 		# If last layer, stop the timer and move to the next stage
 		flood_layer += 1
 		if flood_layer >= layers:
 			flood_timer.stop()
 			# _setup_surfacing()
 			return
-		
+
 		# Setup the next layer by overwriting the img we just saved
 		img = terrain_workspace.get_layer_data(flood_layer)
-	
+
 	# Setup the next iteration on this layer
 	flood_repeat_hash = hash_code
 	var texture = ImageTexture.new()
@@ -122,3 +127,4 @@ func _on_SliceTimer_timeout() -> void:
 
 func _on_FloodTimer_timeout():
 	_flood_step()
+	pass
