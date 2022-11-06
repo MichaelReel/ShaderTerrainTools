@@ -74,6 +74,10 @@ stretch_mode = 1
 [node name="FloodTimer" type="Timer" parent="FloodingViewportContainer"]
 wait_time = 0.1
 
+[node name="SaveTimer" type="Timer" parent="."]
+wait_time = 0.2
+
 [connection signal="file_selected" from="OpenHeightMapDialog" to="." method="_on_OpenHeightMapDialog_file_selected"]
 [connection signal="timeout" from="SlicingViewportContainer/SliceTimer" to="." method="_on_SliceTimer_timeout"]
 [connection signal="timeout" from="FloodingViewportContainer/FloodTimer" to="." method="_on_FloodTimer_timeout"]
+[connection signal="timeout" from="SaveTimer" to="." method="_on_SaveTimer_timeout"]

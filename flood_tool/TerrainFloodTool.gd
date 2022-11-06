@@ -7,6 +7,7 @@ var workspace_path: String
 var terrain_workspace : TextureArray
 var slice_layer : int = 0
 var flood_layer : int = 0
+var save_layer : int = 0
 var flood_repeat_hash : String = ""
 
 onready var open_heightmap := $OpenHeightMapDialog
@@ -19,6 +20,7 @@ onready var flood_texture := $FloodingViewportContainer/Viewport/TextureRect
 onready var flood_viewport := $FloodingViewportContainer/Viewport
 onready var flood_timer := $FloodingViewportContainer/FloodTimer
 
+onready var save_timer := $SaveTimer
 
 func _ready() -> void:
 	# If we're not the root scene, let the caller hit begin_flood directly
@@ -42,7 +44,6 @@ func begin_flood(path: String) -> void:
 
 func _setup_slicing(path: String) -> void:
 	workspace_path = path.replace(".png", "")
-	_make_sure_directory_exists(workspace_path)
 	_setup_image_array()
 	var img := Image.new()
 	var err := img.load(path)
@@ -64,7 +65,6 @@ func _slice_step():
 	
 	if slice_layer == 0:
 		_setup_flooding()
-		pass
 	
 	slice_layer += 1
 	if slice_layer >= layers:
@@ -105,12 +105,13 @@ func _flood_step() -> void:
 		flood_last_layer.create_from_image(img)
 		flood_texture.material.set_shader_param("last_layer", flood_last_layer)
 
+		if flood_layer == 0:
+			_setup_saving()
+
 		# If last layer, stop the timer and move to the next stage
 		flood_layer += 1
 		if flood_layer >= layers:
 			flood_timer.stop()
-			_save_texture_array_as_album(terrain_workspace, workspace_path)
-			# _setup_surfacing()
 			return
 
 		# Setup the next layer by overwriting the img we just saved
@@ -122,6 +123,8 @@ func _flood_step() -> void:
 	texture.create_from_image(img)
 	flood_texture.texture = texture
 
+### SAVING ###
+
 func _make_sure_directory_exists(dir_path: String) -> void:
 	var directory = Directory.new()
 	if not directory.dir_exists(dir_path):
@@ -129,14 +132,28 @@ func _make_sure_directory_exists(dir_path: String) -> void:
 		var new_file = dir_path.get_file()
 		directory.open(parent_path)
 		directory.make_dir(new_file)
-		
 
-func _save_texture_array_as_album(texture_array: TextureArray, album_path: String) -> void:
-	_make_sure_directory_exists(album_path)
-	for i in range(texture_array.get_depth()):
-		var image_filename = album_path + "/%04d.png" % i
-		var image := texture_array.get_layer_data(i)
-		var _err := image.save_png(image_filename)
+func _setup_saving() -> void:
+	_make_sure_directory_exists(workspace_path)
+	save_timer.start()
+
+func _save_step() -> void:
+	var start_ms = OS.get_ticks_usec()
+	
+	if save_layer >= flood_layer:
+		return
+	var image_filename = workspace_path + "/%04d.png" % save_layer
+	var image := terrain_workspace.get_layer_data(save_layer)
+	image.flip_y()
+	var _err := image.save_png(image_filename)
+	
+	save_layer += 1
+	if save_layer >= layers:
+		save_timer.stop()
+		return
+	
+	var time_taken_ms = OS.get_ticks_usec() - start_ms
+	print ("Save time take: %dns" % time_taken_ms)
 
 
 func _on_OpenHeightMapDialog_file_selected(path: String) -> void:
@@ -147,3 +164,6 @@ func _on_SliceTimer_timeout() -> void:
 
 func _on_FloodTimer_timeout():
 	_flood_step()
+
+func _on_SaveTimer_timeout():
+	_save_step()
