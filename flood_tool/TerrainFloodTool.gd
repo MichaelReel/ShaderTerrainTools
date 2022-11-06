@@ -3,6 +3,7 @@ extends Control
 const layers : int = 256
 const slice_depth : float = 1.0 / float(layers)
 
+var workspace_path: String
 var terrain_workspace : TextureArray
 var slice_layer : int = 0
 var flood_layer : int = 0
@@ -40,6 +41,8 @@ func begin_flood(path: String) -> void:
 ### SLICING ###
 
 func _setup_slicing(path: String) -> void:
+	workspace_path = path.replace(".png", "")
+	_make_sure_directory_exists(workspace_path)
 	_setup_image_array()
 	var img := Image.new()
 	var err := img.load(path)
@@ -88,7 +91,7 @@ func _setup_flooding() -> void:
 
 func _flood_step() -> void:
 	# Skip this if we've caught up to available inputs
-	if flood_layer <= slice_layer + 1:
+	if flood_layer >= slice_layer:
 		return
 	
 	flood_viewport.set_clear_mode(Viewport.CLEAR_MODE_ONLY_NEXT_FRAME)
@@ -106,6 +109,7 @@ func _flood_step() -> void:
 		flood_layer += 1
 		if flood_layer >= layers:
 			flood_timer.stop()
+			_save_texture_array_as_album(terrain_workspace, workspace_path)
 			# _setup_surfacing()
 			return
 
@@ -118,6 +122,22 @@ func _flood_step() -> void:
 	texture.create_from_image(img)
 	flood_texture.texture = texture
 
+func _make_sure_directory_exists(dir_path: String) -> void:
+	var directory = Directory.new()
+	if not directory.dir_exists(dir_path):
+		var parent_path = dir_path.get_base_dir()
+		var new_file = dir_path.get_file()
+		directory.open(parent_path)
+		directory.make_dir(new_file)
+		
+
+func _save_texture_array_as_album(texture_array: TextureArray, album_path: String) -> void:
+	_make_sure_directory_exists(album_path)
+	for i in range(texture_array.get_depth()):
+		var image_filename = album_path + "/%04d.png" % i
+		var image := texture_array.get_layer_data(i)
+		var _err := image.save_png(image_filename)
+
 
 func _on_OpenHeightMapDialog_file_selected(path: String) -> void:
 	_setup_slicing(path)
@@ -127,4 +147,3 @@ func _on_SliceTimer_timeout() -> void:
 
 func _on_FloodTimer_timeout():
 	_flood_step()
-	pass

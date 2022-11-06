@@ -565,7 +565,7 @@ margin_right = 315.0
 margin_bottom = 130.0
 window_title = "Save heightmap"
 resizable = true
-access = 2
+access = 1
 
 [connection signal="value_changed" from="GridContainer/HSlider_Warping_1" to="." method="_on_HSlider_value_changed"]
 [connection signal="value_changed" from="GridContainer/HSlider_Warping_2" to="." method="_on_HSlider_value_changed"]

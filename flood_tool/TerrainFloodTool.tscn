@@ -23,7 +23,7 @@ anchor_bottom = 1.0
 window_title = "Open a File"
 resizable = true
 mode = 0
-access = 2
+access = 1
 filters = PoolStringArray( "*.png ; PNG Images" )
 
 [node name="SlicingViewportContainer" type="ViewportContainer" parent="."]
