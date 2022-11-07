@@ -142,8 +142,6 @@ func _setup_saving() -> void:
 	save_timer.start()
 
 func _save_step() -> void:
-	var start_ms = OS.get_ticks_usec()
-	
 	if save_layer >= flood_layer:
 		return
 	var image_filename = workspace_path + "/%04d.png" % save_layer
@@ -157,9 +155,6 @@ func _save_step() -> void:
 		emit_signal("slices_saved", workspace_path)
 		return
 	save_bar.value = save_layer
-	
-	var time_taken_ms = OS.get_ticks_usec() - start_ms
-	print ("Save time take: %dns" % time_taken_ms)
 
 
 func _on_OpenHeightMapDialog_file_selected(path: String) -> void:

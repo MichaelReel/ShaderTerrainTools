@@ -2,6 +2,9 @@ extends Control
 
 signal heightmap_saved(path)
 
+var heightmap_texture : Texture
+var rotation_speed = -0.1;
+
 onready var texture_viewport := $TextureViewportContainer/Viewport
 onready var texture_rect := $TextureViewportContainer/Viewport/TextureRect
 onready var plane_mesh := $TerrainViewportContainer/Viewport/TerrainMesh
@@ -41,7 +44,6 @@ onready var debounce_timer := $GridContainer/DebounceTimer
 onready var rotation_player := $TerrainViewportContainer/Viewport/AnimationPlayer
 onready var file_dialog := $FileDialog
 
-var rotation_speed = -0.1;
 
 func _ready() -> void:
 	rotation_player.play("rotate", -1, rotation_speed)
@@ -124,11 +126,13 @@ func _on_HSlider_sea_changed(_value: float) -> void:
 func _on_Button_pressed() -> void:
 	file_dialog.current_file = _get_time_based_filename() 
 	file_dialog.show()
+	file_dialog.invalidate()
 
 func _on_FileDialog_file_selected(path):
 	texture_viewport.set_clear_mode(Viewport.CLEAR_MODE_ONLY_NEXT_FRAME)
 	yield(VisualServer, "frame_post_draw")
-	var img = texture_viewport.get_texture().get_data()
+	heightmap_texture = texture_viewport.get_texture()
+	var img = heightmap_texture.get_data()
 	img.flip_y()
 	img.save_png(path)
 	emit_signal("heightmap_saved", path)
