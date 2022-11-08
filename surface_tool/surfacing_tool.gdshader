@@ -5,7 +5,7 @@ uniform int layer_count;
 
 const float color_diff = 0.00390625;
 
-float highest_black(vec2 uv) {
+int highest_black_layer(vec2 uv) {
 	int layer = layer_count - 1;
 	vec4 color = texture(layers, vec3(uv, float(layer)));
 	
@@ -13,18 +13,16 @@ float highest_black(vec2 uv) {
 		layer -= 1;
 		color = texture(layers, vec3(uv, float(layer)));
 	}
-	return float(layer) / float(layer_count);
+	return layer;
 }
-
 
 void fragment() {
 	vec2 uv = UV;
-
 	float height = texture(TEXTURE, uv).g;
-	float water = max(height, highest_black(uv));
-	if (water <= height) {
-		water = 0.0;
-	}
+	int water_layer = highest_black_layer(uv);
+	float highest_black = float(water_layer) / float(layer_count);
+	float water = max(height, highest_black);
+	water = (water <= height) ? 0.0 : water;
 
-    COLOR = vec4(0.0, height, water, 1.0);
+    COLOR = vec4(0.0, 0.0, water, 1.0);
 }
