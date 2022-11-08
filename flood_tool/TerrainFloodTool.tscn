@@ -11,6 +11,7 @@ shader_param/slice_height = 0.15
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 4 )
+shader_param/tide_line = null
 
 [node name="TerrainFloodTool" type="Control"]
 anchor_right = 1.0
