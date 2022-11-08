@@ -7,6 +7,12 @@ onready var open_heightmap := $TerrainFilesDialog
 onready var water_mesh := $TerrainViewportContainer/Viewport/WaterLevelMesh
 onready var terrain_mesh := $TerrainViewportContainer/Viewport/TerrainMesh
 
+onready var slider_terrain_scale := $GridContainer/HSlider_TerrainScale
+onready var slider_sealevel := $GridContainer/HSlider_Sealevel
+
+onready var display_terrain_scale := $GridContainer/Label_TerrainScale_Value
+onready var display_sealevel := $GridContainer/Label_Sealevel_Value
+
 func _ready() -> void:
 	# If we're not the root scene, let the caller hit begin_flood directly
 	# If we are the root scene, for dev/debug, pick a height map to load
@@ -14,12 +20,14 @@ func _ready() -> void:
 	if get_parent() == root_node: 
 		_open_dialog()
 	
+	_update_value_displays()
 	_update_water_level_init_shader_uniforms()
+	_update_terrain_shader_uniforms()
 
-func _setup_terrain_shader_uniforms(heightmap_texture : Texture) -> void:
+func _setup_terrain_shader_textures(heightmap_texture : Texture) -> void:
 	terrain_mesh.material_override.set_shader_param("height_map", heightmap_texture)
 	terrain_mesh.material_override.set_shader_param("surface_map", heightmap_texture)
-	
+
 func _update_water_level_init_shader_uniforms() -> void:
 	surface_viewport.set_clear_mode(Viewport.CLEAR_MODE_ONLY_NEXT_FRAME)
 	yield(get_tree(), "idle_frame")
@@ -28,6 +36,11 @@ func _update_water_level_init_shader_uniforms() -> void:
 	var texture : Texture = surface_viewport.get_texture()
 	water_mesh.material_override.set_shader_param("height_map", texture)
 	water_mesh.material_override.set_shader_param("surface_map", texture)
+
+func _update_terrain_shader_uniforms() -> void:
+	water_mesh.material_override.set_shader_param("height_scale", slider_terrain_scale.value)
+	water_mesh.material_override.set_shader_param("min_water_level", slider_sealevel.value)
+	terrain_mesh.material_override.set_shader_param("height_scale", slider_terrain_scale.value)
 
 func _open_dialog() -> void:
 	open_heightmap.show()
@@ -77,10 +90,14 @@ func _open_files_for_surfacing(heightmap_path: String) -> void:
 	
 	begin_surfacing(heightmap_texture, terrain_workspace)
 
+func _update_value_displays() -> void:
+	display_terrain_scale.text   = "%5.2f" % slider_terrain_scale.value
+	display_sealevel.text        = "%5.2f" % slider_sealevel.value
+
 ### SURFACING ###
 
 func begin_surfacing(heightmap_texture: Texture, terrain_workspace: TextureArray) -> void:
-	_setup_terrain_shader_uniforms(heightmap_texture)
+	_setup_terrain_shader_textures(heightmap_texture)
 	surface_texture.texture = heightmap_texture
 	var layers := terrain_workspace.get_depth()
 	print("starting surfacing - setting layers")
@@ -92,3 +109,13 @@ func begin_surfacing(heightmap_texture: Texture, terrain_workspace: TextureArray
 
 func _on_TerrainFilesDialog_file_selected(path: String):
 	_open_files_for_surfacing(path)
+
+
+func _on_HSlider_TerrainScale_value_changed(value):
+	_update_value_displays()
+	_update_terrain_shader_uniforms()
+
+
+func _on_HSlider_Sealevel_value_changed(value):
+	_update_value_displays()
+	_update_terrain_shader_uniforms()
