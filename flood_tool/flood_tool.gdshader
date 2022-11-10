@@ -1,7 +1,5 @@
 shader_type canvas_item;
 
-
-uniform float tide_line;
 uniform sampler2D last_layer; 
 
 const float color_diff = 0.00390625;
@@ -31,7 +29,7 @@ void fragment() {
 			color.r = 1.0;
 		} else if (red_in_proximity(uv, sps, TEXTURE)) {
 			color.r = 1.0;
-			color.g = tide_line;
+			color.g = 1.0;
 		}
 	}
 

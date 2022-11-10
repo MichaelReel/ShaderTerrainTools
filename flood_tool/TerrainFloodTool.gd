@@ -9,7 +9,6 @@ var workspace_path: String
 var terrain_workspace : TextureArray
 var slice_layer : int = 0
 var flood_layer : int = 0
-var tide_line : float = 1.0
 var save_layer : int = 0
 var flood_repeat_hash : String = ""
 
@@ -108,9 +107,6 @@ func _flood_step() -> void:
 		var flood_last_layer := ImageTexture.new()
 		flood_last_layer.create_from_image(img)
 		flood_texture.material.set_shader_param("last_layer", flood_last_layer)
-		
-		# Reset the tide line marker
-		tide_line = 1.0
 
 		if flood_layer == 0:
 			_setup_saving()
@@ -129,7 +125,6 @@ func _flood_step() -> void:
 	var texture = ImageTexture.new()
 	texture.create_from_image(img)
 	flood_texture.texture = texture
-	flood_texture.material.set_shader_param("tide_line", tide_line)
 
 ### SAVING ###
 
