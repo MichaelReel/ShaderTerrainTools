@@ -101,7 +101,8 @@ render_target_update_mode = 3
 [node name="Spatial" type="Spatial" parent="TerrainViewportContainer/Viewport"]
 
 [node name="Camera" type="Camera" parent="TerrainViewportContainer/Viewport/Spatial"]
-transform = Transform( 1, 0, 0, 0, 0.951057, 0.309017, 0, -0.309017, 0.951057, 0, 1.1, 2 )
+transform = Transform( 1, 0, 0, 0, 0.887011, 0.461749, 0, -0.461749, 0.887011, 0, 1.1, 2 )
+current = true
 
 [node name="WaterLevelMesh" type="MeshInstance" parent="TerrainViewportContainer/Viewport"]
 transform = Transform( 4, 0, 0, 0, 1, 0, 0, 0, 4, -2, 0, -2 )
@@ -132,19 +133,19 @@ columns = 3
 
 [node name="Label_TerrainScale" type="Label" parent="GridContainer"]
 margin_top = 1.0
-margin_right = 81.0
+margin_right = 100.0
 margin_bottom = 15.0
-text = "Terrain Scale"
+text = "Terrain Scale:"
 
 [node name="Label_TerrainScale_Value" type="Label" parent="GridContainer"]
-margin_left = 85.0
+margin_left = 104.0
 margin_top = 1.0
-margin_right = 113.0
+margin_right = 132.0
 margin_bottom = 15.0
 text = "0.00"
 
 [node name="HSlider_TerrainScale" type="HSlider" parent="GridContainer"]
-margin_left = 117.0
+margin_left = 136.0
 margin_right = 329.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
@@ -156,19 +157,19 @@ ticks_on_borders = true
 
 [node name="Label_Sealevel" type="Label" parent="GridContainer"]
 margin_top = 21.0
-margin_right = 81.0
+margin_right = 100.0
 margin_bottom = 35.0
-text = "Sealevel"
+text = "Sealevel:"
 
 [node name="Label_Sealevel_Value" type="Label" parent="GridContainer"]
-margin_left = 85.0
+margin_left = 104.0
 margin_top = 21.0
-margin_right = 113.0
+margin_right = 132.0
 margin_bottom = 35.0
 text = "0.00"
 
 [node name="HSlider_Sealevel" type="HSlider" parent="GridContainer"]
-margin_left = 117.0
+margin_left = 136.0
 margin_top = 20.0
 margin_right = 329.0
 margin_bottom = 36.0
@@ -177,6 +178,55 @@ min_value = 0.01
 max_value = 1.0
 step = 0.01
 value = 0.01
+tick_count = 11
+ticks_on_borders = true
+
+[node name="Label_RotateSpeed" type="Label" parent="GridContainer"]
+margin_top = 41.0
+margin_right = 100.0
+margin_bottom = 55.0
+text = "Rotation Speed:"
+
+[node name="Label_RotateSpeed_Value" type="Label" parent="GridContainer"]
+margin_left = 104.0
+margin_top = 41.0
+margin_right = 132.0
+margin_bottom = 55.0
+text = "0.00"
+
+[node name="HSlider_RotateSpeed" type="HSlider" parent="GridContainer"]
+margin_left = 136.0
+margin_top = 40.0
+margin_right = 329.0
+margin_bottom = 56.0
+size_flags_horizontal = 3
+min_value = -1.0
+max_value = 1.0
+step = 0.02
+tick_count = 11
+ticks_on_borders = true
+
+[node name="Label_Zoom" type="Label" parent="GridContainer"]
+margin_top = 61.0
+margin_right = 100.0
+margin_bottom = 75.0
+text = "Zoom:"
+
+[node name="Label_Zoom_Value" type="Label" parent="GridContainer"]
+margin_left = 104.0
+margin_top = 61.0
+margin_right = 132.0
+margin_bottom = 75.0
+text = "0.00"
+
+[node name="HSlider_Zoom" type="HSlider" parent="GridContainer"]
+margin_left = 136.0
+margin_top = 60.0
+margin_right = 329.0
+margin_bottom = 76.0
+size_flags_horizontal = 3
+min_value = 1.0
+value = 70.0
 tick_count = 11
 ticks_on_borders = true
 
@@ -191,4 +241,6 @@ access = 1
 
 [connection signal="value_changed" from="GridContainer/HSlider_TerrainScale" to="." method="_on_HSlider_TerrainScale_value_changed"]
 [connection signal="value_changed" from="GridContainer/HSlider_Sealevel" to="." method="_on_HSlider_Sealevel_value_changed"]
+[connection signal="value_changed" from="GridContainer/HSlider_RotateSpeed" to="." method="_on_HSlider_RotateSpeed_value_changed"]
+[connection signal="value_changed" from="GridContainer/HSlider_Zoom" to="." method="_on_HSlider_Zoom_value_changed"]
 [connection signal="file_selected" from="TerrainFilesDialog" to="." method="_on_TerrainFilesDialog_file_selected"]

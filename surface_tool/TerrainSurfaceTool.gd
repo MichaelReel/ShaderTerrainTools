@@ -6,12 +6,18 @@ onready var surface_texture := $WaterSurfaceViewportContainer/Viewport/TextureRe
 onready var open_heightmap := $TerrainFilesDialog
 onready var water_mesh := $TerrainViewportContainer/Viewport/WaterLevelMesh
 onready var terrain_mesh := $TerrainViewportContainer/Viewport/TerrainMesh
+onready var rotation_player := $TerrainViewportContainer/Viewport/AnimationPlayer
+onready var camera := $TerrainViewportContainer/Viewport/Spatial/Camera
 
 onready var slider_terrain_scale := $GridContainer/HSlider_TerrainScale
 onready var slider_sealevel := $GridContainer/HSlider_Sealevel
+onready var slider_rotate_speed:= $GridContainer/HSlider_RotateSpeed
+onready var slider_zoom:= $GridContainer/HSlider_Zoom
 
 onready var display_terrain_scale := $GridContainer/Label_TerrainScale_Value
 onready var display_sealevel := $GridContainer/Label_Sealevel_Value
+onready var display_rotate_speed := $GridContainer/Label_RotateSpeed_Value
+onready var display_zoom := $GridContainer/Label_Zoom_Value
 
 func _ready() -> void:
 	# If we're not the root scene, let the caller hit begin_flood directly
@@ -23,6 +29,7 @@ func _ready() -> void:
 	_update_value_displays()
 	_update_water_level_init_shader_uniforms()
 	_update_terrain_shader_uniforms()
+	_update_camera_rotation_speed()
 
 func _setup_terrain_shader_textures(heightmap_texture : Texture) -> void:
 	terrain_mesh.material_override.set_shader_param("height_map", heightmap_texture)
@@ -93,6 +100,14 @@ func _open_files_for_surfacing(heightmap_path: String) -> void:
 func _update_value_displays() -> void:
 	display_terrain_scale.text   = "%5.2f" % slider_terrain_scale.value
 	display_sealevel.text        = "%5.2f" % slider_sealevel.value
+	display_rotate_speed.text    = "%5.2f" % slider_rotate_speed.value
+	display_zoom.text            = "%5.2f" % slider_zoom.value
+
+func _update_camera_rotation_speed() -> void:
+	rotation_player.playback_speed = -slider_rotate_speed.value
+
+func _update_camera_zoom() -> void:
+	camera.fov = slider_zoom.value
 
 ### SURFACING ###
 
@@ -119,3 +134,13 @@ func _on_HSlider_TerrainScale_value_changed(value):
 func _on_HSlider_Sealevel_value_changed(value):
 	_update_value_displays()
 	_update_terrain_shader_uniforms()
+
+
+func _on_HSlider_RotateSpeed_value_changed(value):
+	_update_value_displays()
+	_update_camera_rotation_speed()
+
+
+func _on_HSlider_Zoom_value_changed(value):
+	_update_value_displays()
+	_update_camera_zoom()
