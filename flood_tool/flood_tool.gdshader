@@ -8,8 +8,7 @@ const float lod_start = 0.1;
 const float lod_inc = 0.1;
 
 
-bool red_in_proximity(vec2 uv, vec2 sps, sampler2D tex) {
-	// Full Flood Took 243754057usec
+bool red_in_proximity(vec2 uv, sampler2D tex) {
 	float lod = lod_start;
 	float red = textureLod(tex, uv, lod).r;
 	while (red < color_diff) {
@@ -23,20 +22,12 @@ bool red_in_proximity(vec2 uv, vec2 sps, sampler2D tex) {
 	return true;
 }
 
-bool old_red_in_proximity(vec2 uv, vec2 sps, sampler2D tex) {
-	// Full Flood Took 311940480usec
-	float red = textureLod(tex, uv, 0.1).r;
-	return (red >= color_diff);
-}
-
 bool is_black(vec3 color) {
 	return color.r <= 0.0 && color.g <= 0.0 && color.b <=0.0;
 }
 
 void fragment() {
 	vec2 uv = UV;
-//	vec2 sps = SCREEN_PIXEL_SIZE;
-	vec2 sps = TEXTURE_PIXEL_SIZE;
 	vec3 color = texture(TEXTURE, uv).rgb;
 	
 	// If this pixel if black and a red is nearby, set this red
@@ -44,7 +35,7 @@ void fragment() {
 		float last_red = texture(last_layer, uv).r;
 		if (last_red >= 1.0) {
 			color.r = 1.0;
-		} else if (red_in_proximity(uv, sps, TEXTURE)) {
+		} else if (red_in_proximity(uv, TEXTURE)) {
 			color.r = 1.0;
 			color.g = 1.0;
 		}
