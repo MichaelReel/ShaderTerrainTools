@@ -4,10 +4,27 @@ uniform sampler2D last_layer;
 
 const float color_diff = 0.00390625;
 const float color_max = 1.0 - color_diff;
-
+const float lod_start = 0.1;
+const float lod_inc = 0.1;
 
 
 bool red_in_proximity(vec2 uv, vec2 sps, sampler2D tex) {
+	// Full Flood Took 243754057usec
+	float lod = lod_start;
+	float red = textureLod(tex, uv, lod).r;
+	while (red < color_diff) {
+		lod += lod_inc;
+		vec3 col = textureLod(tex, uv, lod).rgb;
+		if (col.b > col.r) {
+			return false;
+		}
+		red = col.r;
+	}
+	return true;
+}
+
+bool old_red_in_proximity(vec2 uv, vec2 sps, sampler2D tex) {
+	// Full Flood Took 311940480usec
 	float red = textureLod(tex, uv, 0.1).r;
 	return (red >= color_diff);
 }

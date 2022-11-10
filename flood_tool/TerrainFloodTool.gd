@@ -25,6 +25,8 @@ onready var flood_timer := $FloodingViewportContainer/FloodTimer
 onready var save_bar := $SaveProgressBar
 onready var save_timer := $SaveProgressBar/SaveTimer
 
+onready var debug_time := OS.get_ticks_usec()
+
 func _ready() -> void:
 	# If we're not the root scene, let the caller hit begin_flood directly
 	# If we are the root scene, for dev/debug, pick a height map to load
@@ -153,6 +155,7 @@ func _save_step() -> void:
 	if save_layer >= layers:
 		save_timer.stop()
 		emit_signal("slices_saved", workspace_path)
+		print("Full Flood Took %dusec" % (OS.get_ticks_usec() - debug_time))
 		return
 	save_bar.value = save_layer
 
