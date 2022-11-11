@@ -3,6 +3,8 @@ extends Control
 
 onready var analysis_viewport := $AnalysisViewportContainer/Viewport
 onready var analysis_texture := $AnalysisViewportContainer/Viewport/TextureRect
+onready var analysis_2_viewport := $Analysis2ViewportContainer/Viewport
+onready var analysis_2_texture := $Analysis2ViewportContainer/Viewport/TextureRect
 onready var open_heightmap := $TerrainFilesDialog
 
 var heightmap_texture : ImageTexture
@@ -70,6 +72,8 @@ func _setup_analysis() -> void:
 	analysis_texture.material.set_shader_param("layers", terrain_workspace)
 	analysis_texture.material.set_shader_param("layer_count", terrain_workspace.get_depth())
 
+	analysis_2_texture.material.set_shader_param("layers", terrain_workspace)
+	analysis_2_texture.material.set_shader_param("layer_count", terrain_workspace.get_depth())
 
 func _on_TerrainFilesDialog_file_selected(path: String) -> void:
 	_open_files_for_surfacing(path)
