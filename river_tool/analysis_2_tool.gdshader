@@ -21,22 +21,24 @@ vec3 something(sampler2D tex, vec2 uv, vec2 sps) {
 	
 	return vec3(red_diff, green_diff, blue_diff);
 }
-//
-//float highest_near_blue(sampler2D tex, vec2 uv, vec2 sps) {
-//	float near_blue = 0.0;
-//	near_blue = max(near_blue, texture(tex, uv + vec2( sps.x,    0.0)).b);
-//	near_blue = max(near_blue, texture(tex, uv + vec2(-sps.x,    0.0)).b);
-//	near_blue = max(near_blue, texture(tex, uv + vec2(   0.0,  sps.y)).b);
-//	near_blue = max(near_blue, texture(tex, uv + vec2(   0.0, -sps.y)).b);
-//
-//	return near_blue;
-//}
+
+float highest_near_blue(sampler2D tex, vec2 uv, vec2 sps) {
+	float near_blue = 0.0;
+	near_blue = max(near_blue, texture(tex, uv + vec2( sps.x,    0.0)).b);
+	near_blue = max(near_blue, texture(tex, uv + vec2(-sps.x,    0.0)).b);
+	near_blue = max(near_blue, texture(tex, uv + vec2(   0.0,  sps.y)).b);
+	near_blue = max(near_blue, texture(tex, uv + vec2(   0.0, -sps.y)).b);
+
+	return near_blue;
+}
 
 void fragment() {
 	vec3 color = vec3(0.0);
 	if (has_green(TEXTURE, SCREEN_UV)) {
-		color = something(TEXTURE, SCREEN_UV, SCREEN_PIXEL_SIZE);
-		color = (color.g < color.b) ? vec3(1.0) : vec3(0.0);
+		float near_blue = highest_near_blue(TEXTURE, SCREEN_UV, SCREEN_PIXEL_SIZE);
+		float green = texture(TEXTURE, SCREEN_UV).g;
+//		color = something(TEXTURE, SCREEN_UV, SCREEN_PIXEL_SIZE);
+		color = (green <= near_blue + 0.003921569) ? vec3(1.0) : vec3(0.0);
 	}
 	COLOR = vec4(color, 1.0);
 }
