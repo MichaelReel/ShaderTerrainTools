@@ -72,6 +72,7 @@ func _setup_analysis() -> void:
 	analysis_texture.material.set_shader_param("layers", terrain_workspace)
 	analysis_texture.material.set_shader_param("layer_count", terrain_workspace.get_depth())
 
+	analysis_2_texture.texture = heightmap_texture
 	analysis_2_texture.material.set_shader_param("layers", terrain_workspace)
 	analysis_2_texture.material.set_shader_param("layer_count", terrain_workspace.get_depth())
 

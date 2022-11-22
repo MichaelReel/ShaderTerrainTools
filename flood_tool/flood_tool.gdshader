@@ -1,6 +1,7 @@
 shader_type canvas_item;
 
-uniform sampler2D last_layer; 
+uniform sampler2D last_layer;
+uniform float flood_t;
 
 const float color_diff = 0.00390625;
 const float color_max = 1.0 - color_diff;
@@ -37,7 +38,7 @@ void fragment() {
 			color.r = 1.0;
 		} else if (red_in_proximity(uv, TEXTURE)) {
 			color.r = 1.0;
-			color.g = 1.0;
+			color.g = flood_t;
 		}
 	}
 

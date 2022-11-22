@@ -4,6 +4,7 @@ signal slices_saved(slices_path)
 
 const layers : int = 256
 const slice_depth : float = 1.0 / float(layers)
+const d_flood_t : float = 0.05
 
 var workspace_path: String
 var terrain_workspace : TextureArray
@@ -11,6 +12,7 @@ var slice_layer : int = 0
 var flood_layer : int = 0
 var save_layer : int = 0
 var flood_repeat_hash : String = ""
+var flood_t : float
 
 onready var open_heightmap := $OpenHeightMapDialog
 
@@ -92,6 +94,7 @@ func _setup_flooding() -> void:
 	texture.create_from_image(terrain_workspace.get_layer_data(flood_layer))
 	flood_texture.texture = texture
 	flood_texture.material.set_shader_param("last_layer", texture)
+	flood_texture.material.set_shader_param("flood_t", flood_t)
 	flood_timer.start()
 
 func _flood_step() -> void:
@@ -121,12 +124,17 @@ func _flood_step() -> void:
 
 		# Setup the next layer by overwriting the img we just saved
 		img = terrain_workspace.get_layer_data(flood_layer)
+		flood_t = 1.0
 
 	# Setup the next iteration on this layer
 	flood_repeat_hash = hash_code
 	var texture = ImageTexture.new()
 	texture.create_from_image(img)
 	flood_texture.texture = texture
+	
+	flood_t -= d_flood_t
+	flood_texture.material.set_shader_param("flood_t", flood_t)
+	
 
 ### SAVING ###
 
