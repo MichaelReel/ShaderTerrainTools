@@ -14,6 +14,9 @@ var save_layer : int = 0
 var flood_repeat_hash : String = ""
 var flood_t : float
 
+var flood_steps : int = 0
+var total_flood_steps : int = 0
+
 onready var open_heightmap := $OpenHeightMapDialog
 
 onready var slice_texture := $SlicingViewportContainer/Viewport/TextureRect
@@ -120,11 +123,13 @@ func _flood_step() -> void:
 		flood_layer += 1
 		if flood_layer >= layers:
 			flood_timer.stop()
+			print("total_flood_steps: %d, average: %0.2f" % [total_flood_steps, float(total_flood_steps) / float(layers)])
 			return
 
 		# Setup the next layer by overwriting the img we just saved
 		img = terrain_workspace.get_layer_data(flood_layer)
 		flood_t = 1.0
+		flood_steps = 0
 
 	# Setup the next iteration on this layer
 	flood_repeat_hash = hash_code
@@ -135,6 +140,9 @@ func _flood_step() -> void:
 	flood_t -= d_flood_t
 	flood_texture.material.set_shader_param("flood_t", flood_t)
 	
+	flood_texture.material.set_shader_param("proximity_fade", max(1.5 - float(flood_steps) * 0.5, 0.0))
+	flood_steps += 1
+	total_flood_steps += 1
 
 ### SAVING ###
 
